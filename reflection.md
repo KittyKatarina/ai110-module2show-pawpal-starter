@@ -2,6 +2,18 @@
 
 ## 1. System Design
 
+Add user info and pet, perhaps being able to create a profile or different family members under users.
+Schedule busy or at home times, being able to find walk and feeding schedules that correlate with users
+free and busy schedules. Capabilities for users, schedules, and creating schedules for pets.
+
+Main objects needed for system include:
+User
+Pet
+FamilyAccount
+UserSchedule (can try for 24hr array or so, 48 to include 30 min intervals?)
+CareSchedule (could be "PetSchedule") and has similar format to above, but also lists needs at specific intervals, feeding, walk
+Assign
+
 **a. Initial design**
 
 - Briefly describe your initial UML design.
