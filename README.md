@@ -105,4 +105,4 @@ Describe your app in numbered steps so a reader can follow along without watchin
 5. Verify tasks were taken care of, schedule was created
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
-![alt text](image.png)
+![alt text](image-1.png)

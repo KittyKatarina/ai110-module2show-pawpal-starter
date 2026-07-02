@@ -101,6 +101,9 @@ for pet in family.pets:
     for t in tasks_to_show:
         when = f"{t.time} — " if t.time else ""
         st.write(f"- {when}{t.task} {'✅' if t.covered else '—'}")
+        conflict_warning = getattr(t, "conflict_warning", "")
+        if conflict_warning:
+            st.caption(f"⚠️ {conflict_warning}")
 
 st.divider()
 
@@ -113,9 +116,7 @@ if st.button("Generate schedule"):
     else:
         family.assign_tasks()
         st.success("Today's Schedule")
-        conflict_found = any(getattr(t, 'conflict_warning', '') for pet in family.pets for t in pet.tasks)
-        if conflict_found:
-            st.warning("Some tasks were skipped due to time conflicts.")
+
         for member in family.members:
             st.markdown(f"**{member.name}**")
             assigned = member.schedule.sorted_tasks()
@@ -123,7 +124,14 @@ if st.button("Generate schedule"):
                 st.write("- (no tasks assigned)")
             for t in assigned:
                 when = f"{t.time} — " if t.time else ""
-                reason = f"\n  - Why: {getattr(t, 'assignment_reason', '')}" if getattr(t, 'assignment_reason', '') else ""
-                conflict_warning = getattr(t, 'conflict_warning', '')
-                conflict_note = f"\n  - ⚠️ {conflict_warning}" if conflict_warning else ""
-                st.write(f"- {when}{t.pet.name}: {t.task}{reason}{conflict_note}")
+                assignment_reason = getattr(t, "assignment_reason", "")
+                reason = f"\n  - Why: {assignment_reason}" if assignment_reason else ""
+                st.write(f"- {when}{t.pet.name}: {t.task}{reason}")
+
+        unscheduled = [t for pet in family.pets for t in pet.tasks if not t.covered]
+        if unscheduled:
+            st.error("The following tasks could NOT be scheduled due to a time conflict:")
+            for t in unscheduled:
+                when = f"{t.time} — " if t.time else ""
+                st.write(f"- {when}{t.pet.name}: {t.task}")
+                st.caption(f"⚠️ {getattr(t, 'conflict_warning', '')}")

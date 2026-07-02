@@ -69,7 +69,7 @@ There was a portion of the pytests that the AI tried to help me with. It was una
 **a. What you tested**
 
 - What behaviors did you test?
-I tested for the sorting logic, as well as made sure the filtering and scheduling worked in the app.
+I tested for the sorting logic and scheduling logic, as well as made sure the filtering and scheduling worked in the app.
 - Why were these tests important?
 These were the main functions of the scheduler, testing the sorting logic helped ensure that the pet lists were sorted correctly
 
@@ -79,6 +79,8 @@ These were the main functions of the scheduler, testing the sorting logic helped
 - What edge cases would you test next if you had more time?
 I don't believe the scheduler detects time conflicts as intended, as when one is detected the program can crash, when I want to warn the user about the conflict and only schedule one of the tasks.
 
+After some work it now correctly notifies the user of time conflicts, and does not schedule multiple for the same time.
+
 ---
 
 ## 5. Reflection
@@ -86,11 +88,14 @@ I don't believe the scheduler detects time conflicts as intended, as when one is
 **a. What went well**
 
 - What part of this project are you most satisfied with?
+How fast the AI made a working application that takes in user input and performs logical calculations. Its also 
 
 **b. What you would improve**
 
 - If you had another iteration, what would you improve or redesign?
+I would need to be much more careful with the skeleton of the project. I would need to work more on it and ask the AI for suggestions as well as any logical errors it sees.
 
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+Once you have a skeleton set up its very hard to change the logic that was originally set in place. Be very careful about what skeleton is created and try not to miss important things from the beginning.
