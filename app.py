@@ -1,5 +1,7 @@
 import streamlit as st
 
+from pawpal_system import FamilyAccount, User, Pet, CareTask, UserSchedule
+
 st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")
 
 st.title("🐾 PawPal+")
@@ -38,51 +40,74 @@ At minimum, your system should:
 
 st.divider()
 
-st.subheader("Quick Demo Inputs (UI only)")
-owner_name = st.text_input("Owner name", value="Jordan")
-pet_name = st.text_input("Pet name", value="Mochi")
-species = st.selectbox("Species", ["dog", "cat", "other"])
+# Create the FamilyAccount once and keep it in the session "vault" so it
+# survives Streamlit's rerun-on-every-interaction. On later reruns the key
+# already exists, so we reuse the same instance instead of rebuilding it.
+if "family" not in st.session_state:
+    family = FamilyAccount(account_id=1, family_name="My Family")
+    family.add_member(User(user_id=1, name="Jordan"))
+    st.session_state.family = family
 
-st.markdown("### Tasks")
-st.caption("Add a few tasks. In your final version, these should feed into your scheduler.")
+family = st.session_state.family
 
-if "tasks" not in st.session_state:
-    st.session_state.tasks = []
-
-col1, col2, col3 = st.columns(3)
+st.subheader("Add a Pet")
+col1, col2 = st.columns([3, 1])
 with col1:
-    task_title = st.text_input("Task title", value="Morning walk")
+    new_pet_name = st.text_input("Pet name", value="Mochi", label_visibility="collapsed")
 with col2:
-    duration = st.number_input("Duration (minutes)", min_value=1, max_value=240, value=20)
-with col3:
-    priority = st.selectbox("Priority", ["low", "medium", "high"], index=2)
+    if st.button("Add pet"):
+        if new_pet_name.strip():
+            # Derive a unique id from the current pets so it survives reruns.
+            next_id = max((p.pet_id for p in family.pets), default=0) + 1
+            family.add_pet(Pet(pet_id=next_id, name=new_pet_name.strip()))
+        else:
+            st.warning("Enter a pet name first.")
 
-if st.button("Add task"):
-    st.session_state.tasks.append(
-        {"title": task_title, "duration_minutes": int(duration), "priority": priority}
-    )
+if not family.pets:
+    st.info("No pets yet. Add one above.")
 
-if st.session_state.tasks:
-    st.write("Current tasks:")
-    st.table(st.session_state.tasks)
+st.divider()
+
+st.subheader("Schedule a Task")
+if family.pets:
+    col1, col2, col3 = st.columns([2, 3, 2])
+    with col1:
+        pet_names = [p.name for p in family.pets]
+        selected_pet_name = st.selectbox("For pet", pet_names)
+    with col2:
+        task_title = st.text_input("Task", value="Morning walk")
+    with col3:
+        task_time = st.time_input("Time")
+
+    if st.button("Add task"):
+        pet = next(p for p in family.pets if p.name == selected_pet_name)
+        pet.add_task(CareTask(task_title, pet, time=task_time.strftime("%H:%M")))
 else:
-    st.info("No tasks yet. Add one above.")
+    st.caption("Add a pet before scheduling tasks.")
+
+# Show each pet's current tasks.
+for pet in family.pets:
+    st.markdown(f"**{pet.name}** — {pet.task_count()} task(s)")
+    for t in pet.tasks:
+        when = f"{t.time} — " if t.time else ""
+        st.write(f"- {when}{t.task} {'✅' if t.covered else '—'}")
 
 st.divider()
 
 st.subheader("Build Schedule")
-st.caption("This button should call your scheduling logic once you implement it.")
+st.caption("Automatically assigns every task to family members (round-robin).")
 
 if st.button("Generate schedule"):
-    st.warning(
-        "Not implemented yet. Next step: create your scheduling logic (classes/functions) and call it here."
-    )
-    st.markdown(
-        """
-Suggested approach:
-1. Design your UML (draft).
-2. Create class stubs (no logic).
-3. Implement scheduling behavior.
-4. Connect your scheduler here and display results.
-"""
-    )
+    if not any(pet.tasks for pet in family.pets):
+        st.warning("Add at least one task first.")
+    else:
+        family.assign_tasks()
+        st.success("Today's Schedule")
+        for member in family.members:
+            st.markdown(f"**{member.name}**")
+            assigned = member.schedule.view()
+            if not assigned:
+                st.write("- (no tasks assigned)")
+            for t in assigned:
+                when = f"{t.time} — " if t.time else ""
+                st.write(f"- {when}{t.pet.name}: {t.task}")

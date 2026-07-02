@@ -4,14 +4,16 @@ from typing import List
 
 
 class CareTask:
-    def __init__(self, task: str, pet: "Pet", covered: bool = False):
+    def __init__(self, task: str, pet: "Pet", time: str = "", covered: bool = False):
         self.task: str = task
         self.pet: "Pet" = pet
+        self.time: str = time
         self.covered: bool = covered
 
     def __repr__(self) -> str:
         state = "covered" if self.covered else "uncovered"
-        return f"CareTask({self.task!r} for {self.pet.name}, {state})"
+        when = f" at {self.time}" if self.time else ""
+        return f"CareTask({self.task!r}{when} for {self.pet.name}, {state})"
 
 
 class Pet:
