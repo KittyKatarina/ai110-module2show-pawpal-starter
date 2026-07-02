@@ -38,11 +38,13 @@ The AI also suggested changes for adding removal methods to remove tasks, as wel
 
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
 - How did you decide which constraints mattered most?
+The user has a schedule that is filled as tasks are added to the pets, and when the schedule is generated.
 
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
+One tradeoff for the scheduler is that it does not create a full calendar schedule, so holidays, events, and other things are not taken into account when using it.
 
 ---
 
@@ -52,11 +54,13 @@ The AI also suggested changes for adding removal methods to remove tasks, as wel
 
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
 - What kinds of prompts or questions were most helpful?
+The AI was most helpful when moving and linking up the different files. It easily created the imports and linked the classes easily to use in each file. The prompts that were most helpful were when I told it to take stuff from one file and add it to another. It was also very useful in building the UML diagrams.
 
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.
 - How did you evaluate or verify what the AI suggested?
+There was a portion of the pytests that the AI tried to help me with. It was unable to fix my error that I was having and actually applied a "fix" that suppressed the error I was getting, and then printing out the expected message, so there are many times you have to keep a close eye on the AI.
 
 ---
 
@@ -65,7 +69,9 @@ The AI also suggested changes for adding removal methods to remove tasks, as wel
 **a. What you tested**
 
 - What behaviors did you test?
+I tested for the sorting logic, as well as made sure the filtering and scheduling worked in the app.
 - Why were these tests important?
+These were the main functions of the scheduler, testing the sorting logic helped ensure that the pet lists were sorted correctly
 
 **b. Confidence**
 

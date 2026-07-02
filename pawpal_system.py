@@ -9,6 +9,7 @@ class CareTask:
         self.pet: "Pet" = pet
         self.time: str = time
         self.covered: bool = covered
+        self.assignment_reason: str = ""
 
     def __repr__(self) -> str:
         state = "covered" if self.covered else "uncovered"
@@ -42,6 +43,16 @@ class Pet:
         """Return the number of tasks this pet has."""
         return len(self.tasks)
 
+    def sorted_tasks(self) -> List[CareTask]:
+        """Return tasks sorted by time, placing untimed tasks last."""
+        return sorted(
+            self.tasks,
+            key=lambda task: (
+                task.time == "",
+                task.time or "99:99",
+            ),
+        )
+
     def __repr__(self) -> str:
         return f"Pet(#{self.pet_id} {self.name!r}, {len(self.tasks)} tasks)"
 
@@ -66,6 +77,16 @@ class UserSchedule:
     def view(self) -> List[CareTask]:
         """Return a copy of the tasks assigned to this schedule."""
         return list(self.tasks)
+
+    def sorted_tasks(self) -> List[CareTask]:
+        """Return assigned tasks sorted by time, placing untimed tasks last."""
+        return sorted(
+            self.tasks,
+            key=lambda task: (
+                task.time == "",
+                task.time or "99:99",
+            ),
+        )
 
     def __repr__(self) -> str:
         return f"UserSchedule(user #{self.owner_user_id}, {len(self.tasks)} tasks)"
@@ -107,15 +128,24 @@ class FamilyAccount:
             self.pets.append(pet)
 
     def assign_tasks(self) -> None:
-        """Auto-assign every uncovered pet task to members round-robin."""
+        """Auto-assign every uncovered pet task to members with simple timing-aware logic."""
         if not self.members:
             raise ValueError("No members to assign tasks to.")
-        i = 0
+
         for pet in self.pets:
-            for task in pet.uncovered_tasks():
-                member = self.members[i % len(self.members)]
+            for task in pet.sorted_tasks():
+                if task.covered:
+                    continue
+
+                member = self._pick_member_for_task(task)
                 member.schedule.add_task(task)
-                i += 1
+                task.assignment_reason = (
+                    f"Assigned to {member.name} because they have the lightest current load"
+                )
+
+    def _pick_member_for_task(self, task: CareTask) -> User:
+        """Pick the member with the fewest assigned tasks for a new task."""
+        return min(self.members, key=lambda member: (len(member.schedule.view()), member.name))
 
     def __repr__(self) -> str:
         return (

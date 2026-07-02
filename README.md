@@ -71,7 +71,15 @@ pytest --cov
 Sample test output:
 
 ```
-# Paste your pytest output here
+================================================== test session starts ==================================================
+platform win32 -- Python 3.13.13, pytest-9.0.3, pluggy-1.6.0
+rootdir: C:\Users\ferri\Code\AI110\ai110-module2show-pawpal-starter
+plugins: anyio-4.13.0
+collected 4 items                                                                                                        
+
+tests\test_pawpal.py ....                                                                                          [100%]
+
+=================================================== 4 passed in 0.03s ===================================================
 ```
 
 ## 📐 Smarter Scheduling
@@ -80,19 +88,21 @@ Sample test output:
 
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
+| Task sorting | Sorts by time in day, so the schedule is in order| e.g., by priority, duration |
+| Filtering | Can filter by pet name, viewing specific pet's tasks| e.g., skip tasks if time runs out |
 | Conflict handling | | e.g., overlapping time slots |
 | Recurring tasks | | e.g., daily vs. weekly |
+| Verify tasks | Can verify tasks were added to schedule | Add's a ✅ to the task list |
 
 ## 📸 Demo Walkthrough
 
 Describe your app in numbered steps so a reader can follow along without watching a video:
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. Create a Pet by entering their name
+2. Create a task for the pet, naming it and giving it a time
+3. Repeat above with new pets and new tasks
+4. Generate schedule
+5. Verify tasks were taken care of, schedule was created
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+![alt text](image.png)

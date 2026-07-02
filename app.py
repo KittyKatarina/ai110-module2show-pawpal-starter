@@ -1,6 +1,6 @@
 import streamlit as st
 
-from pawpal_system import FamilyAccount, User, Pet, CareTask, UserSchedule
+from pawpal_system import FamilyAccount, User, Pet, CareTask
 
 st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")
 
@@ -85,17 +85,27 @@ if family.pets:
 else:
     st.caption("Add a pet before scheduling tasks.")
 
-# Show each pet's current tasks.
+st.subheader("Task List")
+pet_filter_options = ["All pets"] + [pet.name for pet in family.pets]
+pet_filter = st.selectbox("Filter tasks by pet", pet_filter_options, key="pet_filter")
+
+# Show each pet's current tasks in a consistent, time-aware order.
 for pet in family.pets:
+    if pet_filter != "All pets" and pet.name != pet_filter:
+        continue
+
     st.markdown(f"**{pet.name}** — {pet.task_count()} task(s)")
-    for t in pet.tasks:
+    tasks_to_show = pet.sorted_tasks()
+    if not tasks_to_show:
+        st.caption("No tasks yet for this pet.")
+    for t in tasks_to_show:
         when = f"{t.time} — " if t.time else ""
         st.write(f"- {when}{t.task} {'✅' if t.covered else '—'}")
 
 st.divider()
 
 st.subheader("Build Schedule")
-st.caption("Automatically assigns every task to family members (round-robin).")
+st.caption("Automatically assigns every task to family members using a simple time-aware strategy.")
 
 if st.button("Generate schedule"):
     if not any(pet.tasks for pet in family.pets):
@@ -105,9 +115,10 @@ if st.button("Generate schedule"):
         st.success("Today's Schedule")
         for member in family.members:
             st.markdown(f"**{member.name}**")
-            assigned = member.schedule.view()
+            assigned = member.schedule.sorted_tasks()
             if not assigned:
                 st.write("- (no tasks assigned)")
             for t in assigned:
                 when = f"{t.time} — " if t.time else ""
-                st.write(f"- {when}{t.pet.name}: {t.task}")
+                reason = f"\n  - Why: {t.assignment_reason}" if t.assignment_reason else ""
+                st.write(f"- {when}{t.pet.name}: {t.task}{reason}")
