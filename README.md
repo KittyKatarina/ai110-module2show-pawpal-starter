@@ -103,6 +103,7 @@ Describe your app in numbered steps so a reader can follow along without watchin
 3. Repeat above with new pets and new tasks
 4. Generate schedule
 5. Verify tasks were taken care of, schedule was created
+6. Verify scheduled conflicts will warn the user, and which tasks were not scheduled
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
 ![alt text](image-1.png)
