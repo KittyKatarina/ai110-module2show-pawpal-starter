@@ -10,6 +10,7 @@ class CareTask:
         self.time: str = time
         self.covered: bool = covered
         self.assignment_reason: str = ""
+        self.conflict_warning: str = ""
 
     def __repr__(self) -> str:
         state = "covered" if self.covered else "uncovered"
@@ -65,6 +66,10 @@ class UserSchedule:
     def add_task(self, task: CareTask) -> None:
         """Assign a task to this schedule and mark it covered."""
         if task not in self.tasks:
+            if not hasattr(task, "conflict_warning"):
+                task.conflict_warning = ""
+            if self._has_time_conflict(task):
+                task.conflict_warning = "Time conflict: this task is within 30 minutes of another task."
             self.tasks.append(task)
             task.covered = True
 
@@ -87,6 +92,35 @@ class UserSchedule:
                 task.time or "99:99",
             ),
         )
+
+    def _has_time_conflict(self, candidate_task: CareTask) -> bool:
+        """Return True if the candidate overlaps an existing task within 30 minutes."""
+        if not candidate_task.time:
+            return False
+
+        try:
+            candidate_minutes = self._to_minutes(candidate_task.time)
+        except ValueError:
+            return False
+
+        for existing_task in self.tasks:
+            if not existing_task.time:
+                continue
+            try:
+                existing_minutes = self._to_minutes(existing_task.time)
+            except ValueError:
+                continue
+            if abs(candidate_minutes - existing_minutes) < 30:
+                return True
+
+        return False
+
+    def _to_minutes(self, time_text: str) -> int:
+        """Convert HH:MM to minutes since midnight."""
+        hour_str, minute_str = time_text.split(":", 1)
+        hour = int(hour_str)
+        minute = int(minute_str)
+        return hour * 60 + minute
 
     def __repr__(self) -> str:
         return f"UserSchedule(user #{self.owner_user_id}, {len(self.tasks)} tasks)"
@@ -128,7 +162,7 @@ class FamilyAccount:
             self.pets.append(pet)
 
     def assign_tasks(self) -> None:
-        """Auto-assign every uncovered pet task to members with simple timing-aware logic."""
+        """Auto-assign every uncovered pet task to members without overlapping times."""
         if not self.members:
             raise ValueError("No members to assign tasks to.")
 
@@ -138,6 +172,10 @@ class FamilyAccount:
                     continue
 
                 member = self._pick_member_for_task(task)
+                if member.schedule._has_time_conflict(task):
+                    task.conflict_warning = "Time conflict: this task was not added because it overlaps another task."
+                    continue
+
                 member.schedule.add_task(task)
                 task.assignment_reason = (
                     f"Assigned to {member.name} because they have the lightest current load"

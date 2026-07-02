@@ -90,7 +90,7 @@ tests\test_pawpal.py ....                                                       
 |---------|-----------|-------|
 | Task sorting | Sorts by time in day, so the schedule is in order| e.g., by priority, duration |
 | Filtering | Can filter by pet name, viewing specific pet's tasks| e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
+| Conflict handling | Scheduler will warn the user of a conflict, and only schedule one task | e.g., overlapping time slots |
 | Recurring tasks | | e.g., daily vs. weekly |
 | Verify tasks | Can verify tasks were added to schedule | Add's a ✅ to the task list |
 

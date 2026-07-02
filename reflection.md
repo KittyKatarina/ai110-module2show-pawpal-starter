@@ -77,6 +77,7 @@ These were the main functions of the scheduler, testing the sorting logic helped
 
 - How confident are you that your scheduler works correctly?
 - What edge cases would you test next if you had more time?
+I don't believe the scheduler detects time conflicts as intended, as when one is detected the program can crash, when I want to warn the user about the conflict and only schedule one of the tasks.
 
 ---
 

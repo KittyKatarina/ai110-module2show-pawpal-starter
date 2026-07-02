@@ -113,6 +113,9 @@ if st.button("Generate schedule"):
     else:
         family.assign_tasks()
         st.success("Today's Schedule")
+        conflict_found = any(getattr(t, 'conflict_warning', '') for pet in family.pets for t in pet.tasks)
+        if conflict_found:
+            st.warning("Some tasks were skipped due to time conflicts.")
         for member in family.members:
             st.markdown(f"**{member.name}**")
             assigned = member.schedule.sorted_tasks()
@@ -120,5 +123,7 @@ if st.button("Generate schedule"):
                 st.write("- (no tasks assigned)")
             for t in assigned:
                 when = f"{t.time} — " if t.time else ""
-                reason = f"\n  - Why: {t.assignment_reason}" if t.assignment_reason else ""
-                st.write(f"- {when}{t.pet.name}: {t.task}{reason}")
+                reason = f"\n  - Why: {getattr(t, 'assignment_reason', '')}" if getattr(t, 'assignment_reason', '') else ""
+                conflict_warning = getattr(t, 'conflict_warning', '')
+                conflict_note = f"\n  - ⚠️ {conflict_warning}" if conflict_warning else ""
+                st.write(f"- {when}{t.pet.name}: {t.task}{reason}{conflict_note}")

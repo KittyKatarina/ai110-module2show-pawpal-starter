@@ -30,6 +30,20 @@ def test_task_addition():
     assert pet.task_count() == 1
 
 
+def test_simple_time_conflict_detection():
+    """A task should be flagged when it is within 30 minutes of another scheduled task."""
+    pet = Pet(pet_id=1, name="Rex")
+    schedule = UserSchedule(owner_user_id=1)
+
+    first_task = CareTask("Feed", pet, time="08:00")
+    second_task = CareTask("Walk", pet, time="08:20")
+
+    schedule.add_task(first_task)
+    schedule.add_task(second_task)
+
+    assert second_task.conflict_warning
+
+
 def test_tasks_sort_by_time():
     """Tasks should be sorted by time, with untimed tasks placed last."""
     pet = Pet(pet_id=1, name="Rex")
@@ -68,6 +82,7 @@ def test_assign_tasks_records_explanations():
 if __name__ == "__main__":
     test_task_completion()
     test_task_addition()
+    test_simple_time_conflict_detection()
     test_tasks_sort_by_time()
     test_assign_tasks_records_explanations()
     print("All tests passed.")
