@@ -3,7 +3,7 @@
 ## 1. System Design
 
 Add user info and pet, perhaps being able to create a profile or different family members under users.
-Schedule busy or at home times, being able to find walk and feeding schedules that correlate with users
+Schedule busy or free times, being able to find walk and feeding schedules that correlate with users
 free and busy schedules. Capabilities for users, schedules, and creating schedules for pets.
 
 Main objects needed for system include:
@@ -27,8 +27,9 @@ The CareTask class is for each individual task a pet needs, such as a walk at a 
 **b. Design changes**
 
 - Did your design change during implementation?
+Yes, explained below
 - If yes, describe at least one change and why you made it.
-
+The AI also suggested changes for adding removal methods to remove tasks, as well as consolidating area's of the code that performed the same thing. There were two lists to keep track of the same schedule, as well as two ways to add tasks to a schedule that were both for the same thing.
 ---
 
 ## 2. Scheduling Logic and Tradeoffs

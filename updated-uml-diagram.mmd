@@ -1,0 +1,46 @@
+classDiagram
+    class FamilyAccount {
+        +int accountId
+        +string familyName
+        +List~User~ members
+        +List~Pet~ pets
+        +addMember(User)
+        +addPet(Pet)
+    }
+
+    class User {
+        +int userId
+        +string name
+        +UserSchedule schedule
+        +createProfile()
+        +addTask(CareTask, int slot)
+    }
+
+    class Pet {
+        +int petId
+        +string name
+        +List~CareTask~ tasks
+        +addTask(CareTask)
+        +removeTask(CareTask)
+    }
+
+    class UserSchedule {
+        +int ownerUserId
+        +CareTask[48] tasks
+        +isFree(int slot) bool
+        +addTask(CareTask, int slot)
+        +removeTask(int slot)
+    }
+
+    class CareTask {
+        +string task
+        +Pet pet
+        +bool covered
+    }
+
+    FamilyAccount "1" o-- "many" User : owns
+    FamilyAccount "1" o-- "many" Pet : owns
+    User "1" --> "1" UserSchedule : has
+    UserSchedule "1" o-- "many" CareTask : holds
+    CareTask "1" --> "1" Pet : for
+    Pet "1" o-- "many" CareTask : needs
