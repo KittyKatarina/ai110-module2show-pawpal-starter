@@ -1,0 +1,53 @@
+classDiagram
+    class FamilyAccount {
+        +int accountId
+        +string familyName
+        +List~User~ members
+        +List~Pet~ pets
+        +addMember(User)
+        +addPet(Pet)
+    }
+
+    class User {
+        +int userId
+        +string name
+        +UserSchedule schedule
+        +createProfile()
+        +addTask(CareTask, int slot)
+    }
+
+    class Pet {
+        +int petId
+        +string name
+        +List~CareTask~ tasks
+    }
+
+    class UserSchedule {
+        +int ownerUserId
+        +bool[48] intervals
+        +CareTask[48] tasks
+        +setBusy(int slot)
+        +setFree(int slot)
+        +isFree(int slot) bool
+    }
+
+    class CareTask {
+        +string task
+        +Pet pet
+        +bool covered
+    }
+
+    FamilyAccount "1" o-- "many" User : owns
+    FamilyAccount "1" o-- "many" Pet : owns
+    User "1" --> "1" UserSchedule : has
+    UserSchedule "1" o-- "many" CareTask : holds
+    CareTask "1" --> "1" Pet : for
+    Pet "1" o-- "many" CareTask : needs
+    FamilyAccount ..> UserSchedule : reads
+```
+
+## Notes
+- **FamilyAccount** is the top-level container grouping users and pets.
+- **UserSchedule** uses a 48-slot boolean array (30-min intervals over 24h) for availability, plus a parallel slot array holding any CareTask assigned to that slot.
+- **User.addTask(CareTask, int slot)** is a manual assignment: a user places a specific CareTask into a specific user's free slot. There is no automatic matching.
+- **CareTask** carries a reference to the **Pet** it cares for (feed, walk), and is dropped directly into a UserSchedule slot when assigned.

@@ -17,7 +17,12 @@ Assign
 **a. Initial design**
 
 - Briefly describe your initial UML design.
+The initial UML design has different classes to handle different use cases. Some example classes were FamilyAccount to hold an account id per account, lists of family members, pets, and functionality to add and remove items from those. The UML also had a user class and a pet class to add new users and pets to the familyaccount class. Classes were also created for user schedules to show free time, and to add pet care tasks to user's schedules.
 - What classes did you include, and what responsibilities did you assign to each?
+The FamilyAccount class is the account class that has a unique account id in case of shared family names
+    Also has lists to keep a list of User class and Pet classes.
+The schedule class is for a user, and is to store the CareTasks that a pet needs and the user's availability. The schedule is an array of size 48 to give 30 minute intervals in the schedule as well. This class also has functions to add and remove these tasks, and the tasks themselves have a flag to see if the task is covered or not.
+The CareTask class is for each individual task a pet needs, such as a walk at a specific time, or dinner.
 
 **b. Design changes**
 
