@@ -21,19 +21,23 @@ class Pet:
         self.tasks: List[CareTask] = []
 
     def add_task(self, task: CareTask) -> None:
+        """Add a care task to this pet's task list."""
         if task.pet is not self:
             raise ValueError(f"Task {task.task!r} does not belong to {self.name}.")
         if task not in self.tasks:
             self.tasks.append(task)
 
     def remove_task(self, task: CareTask) -> None:
+        """Remove a care task from this pet's task list."""
         if task in self.tasks:
             self.tasks.remove(task)
 
     def uncovered_tasks(self) -> List[CareTask]:
+        """Return this pet's tasks that are not yet covered."""
         return [t for t in self.tasks if not t.covered]
 
     def task_count(self) -> int:
+        """Return the number of tasks this pet has."""
         return len(self.tasks)
 
     def __repr__(self) -> str:
@@ -46,16 +50,19 @@ class UserSchedule:
         self.tasks: List[CareTask] = []
 
     def add_task(self, task: CareTask) -> None:
+        """Assign a task to this schedule and mark it covered."""
         if task not in self.tasks:
             self.tasks.append(task)
             task.covered = True
 
     def remove_task(self, task: CareTask) -> None:
+        """Unassign a task from this schedule and mark it uncovered."""
         if task in self.tasks:
             self.tasks.remove(task)
             task.covered = False
 
     def view(self) -> List[CareTask]:
+        """Return a copy of the tasks assigned to this schedule."""
         return list(self.tasks)
 
     def __repr__(self) -> str:
@@ -69,6 +76,7 @@ class User:
         self.schedule: UserSchedule = UserSchedule(user_id)
 
     def create_profile(self) -> dict:
+        """Return a summary of this user and their assigned tasks."""
         return {
             "userId": self.user_id,
             "name": self.name,
@@ -87,19 +95,17 @@ class FamilyAccount:
         self.pets: List[Pet] = []
 
     def add_member(self, user: User) -> None:
+        """Add a user to this family account."""
         if user not in self.members:
             self.members.append(user)
 
     def add_pet(self, pet: Pet) -> None:
+        """Add a pet to this family account."""
         if pet not in self.pets:
             self.pets.append(pet)
 
     def assign_tasks(self) -> None:
-        """Automatically assign every uncovered pet task to a family member.
-
-        Tasks are distributed round-robin so the workload is spread evenly
-        across all members.
-        """
+        """Auto-assign every uncovered pet task to members round-robin."""
         if not self.members:
             raise ValueError("No members to assign tasks to.")
         i = 0
